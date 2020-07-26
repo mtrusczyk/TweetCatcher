@@ -1,28 +1,29 @@
 var TweetContext = require('./implementation/context/tweetContext');
 const TwitterService = require('./implementation/TwitterService/twiter-service');
+const AzureService = require('./implementation/AzureService/azure-service');
 
 const getTweets = async () => {
     let context
     try {
         context = new TweetContext();
-        const service = new TwitterService();
-        let response = await service.getTweets({
-            "query": "from:elonmusk lang:en",
-            "maxResults": "100",
-            "fromDate": "201701010000",
-            "toDate": "202007010000"
-        }, 'https://api.twitter.com/1.1/tweets/search/fullarchive/capstone.json');
+        const twitterService = new TwitterService();
+        const azureService = new AzureService();
+        const azureUrl = process.env.AZURE_FUNCTION_URL;
+        const twitterUrl = 'https://api.twitter.com/1.1/tweets/search/fullarchive/capstone.json';
+        let cont = true;
 
-        while (response.data.next) {
-            await context.insertTweets(response.data.results);
-            await sleep();
-            response = await service.getTweets({
+        while (cont) {
+            const result = await twitterService.getTweets({
                 "query": "from:elonmusk lang:en",
                 "maxResults": "100",
                 "fromDate": "201701010000",
-                "toDate": "202007010000",
-                "next": response.data.next
-            }, 'https://api.twitter.com/1.1/tweets/search/fullarchive/capstone.json');
+                "toDate": "202007010000"
+            }, twitterUrl);
+            await context.insertTweets(response.data.results);
+            await azureService.insertTweets(response.data.results, azureUrl);
+            if (!result.data.next)
+                cont = false;
+            await sleep(500);
         }
     } catch (err) {
         console.error(err);
