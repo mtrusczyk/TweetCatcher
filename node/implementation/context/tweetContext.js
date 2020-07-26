@@ -2,7 +2,6 @@ var MongoClient = require('mongodb').MongoClient;
 
 class TweetContext {
     constructor() {
-        console.log(process.env.TWEET_DATABASE);
         const mongoUrl = `mongodb://${process.env.CAPSTONE_WRITE_USER}:${process.env.CAPSTONE_WRITE_PASSWORD}@${process.env.MONGO_BASE_URL}?authSource=${process.env.TWEET_DATABASE}`;
         this.client = new MongoClient(mongoUrl, { useUnifiedTopology: true });
         this.client.connect().then(() => {
@@ -16,7 +15,6 @@ class TweetContext {
      * @param {any[]} tweets 
      */
     async insertTweets(tweets) {
-        console.log("tweets", tweets.length)
         try {
             await this.collection.insertMany(tweets);
             return Promise.resolve();

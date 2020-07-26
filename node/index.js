@@ -2,7 +2,6 @@ var TweetContext = require('./implementation/context/tweetContext');
 const TwitterService = require('./implementation/TwitterService/twiter-service');
 
 const getTweets = async () => {
-    console.log(process.env);
     let context
     try {
         context = new TweetContext();
@@ -13,8 +12,6 @@ const getTweets = async () => {
             "fromDate": "201701010000",
             "toDate": "202007010000"
         }, 'https://api.twitter.com/1.1/tweets/search/fullarchive/capstone.json');
-
-        console.log(response.data.next);
 
         while (response.data.next) {
             await context.insertTweets(response.data.results);

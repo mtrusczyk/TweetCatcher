@@ -2,7 +2,6 @@ var axios = require('axios').default;
 class TwitterService {
     async getTweets(body, url) {
         try {
-            console.log("token", process.env.BEARER_TOKEN);
             var config = {
                 method: 'post',
                 url: url,
