@@ -1,6 +1,7 @@
 var axios = require('axios').default;
 class AzureService {
     async insertTweets(tweets, url) {
+        if (!tweets) throw new Error("Tweets cannot be null")
         var data = JSON.stringify({ "tweets": tweets });
 
         var config = {

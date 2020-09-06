@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: "mongo:4.2"
+    image: "mongo:4.2:latest"
     restart: always
     volumes:
       - "/data/db:/mongodata"
@@ -18,6 +18,8 @@ services:
     volumes:
       - ./node:/app
     command: node index.js
+    ports:
+      - 3000:3000
     networks: 
       - back-tier
     env_file: 

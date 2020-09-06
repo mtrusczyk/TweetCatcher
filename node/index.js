@@ -1,42 +1,30 @@
-var TweetContext = require('./implementation/context/tweetContext');
-const TwitterService = require('./implementation/TwitterService/twiter-service');
-const AzureService = require('./implementation/AzureService/azure-service');
+const TweetCatcher = require('./implementation/TweetCatcher/tweet-catcher');
+const express = require('express')
+
+const app = express()
+const port = process.env.PORT
+
+app.get('/', (req, res) => {
+    getTweets().then(_ => {
+        res.send('done');
+    }).catch(err => {
+        console.log('index.js', err);
+        res.send('error');
+    })
+})
+
+app.listen(port, () => {
+    console.log(`listening on port ${process.env.PORT}`);
+})
 
 const getTweets = async () => {
-    let context
     try {
-        context = new TweetContext();
-        const twitterService = new TwitterService();
-        const azureService = new AzureService();
-        const azureUrl = process.env.AZURE_FUNCTION_URL;
-        const twitterUrl = 'https://api.twitter.com/1.1/tweets/search/fullarchive/capstone.json';
-        let cont = true;
-
-        while (cont) {
-            const result = await twitterService.getTweets({
-                "query": "from:elonmusk lang:en",
-                "maxResults": "100",
-                "fromDate": "201701010000",
-                "toDate": "202007010000"
-            }, twitterUrl);
-            await context.insertTweets(response.data.results);
-            await azureService.insertTweets(response.data.results, azureUrl);
-            if (!result.data.next)
-                cont = false;
-            await sleep(500);
-        }
+        const tweetCatcher = new TweetCatcher();
+        const result = await tweetCatcher.catchTweets()
+        return Promise.resolve(result);
     } catch (err) {
-        console.error(err);
-    } finally {
-        context.closeConnection();
+        Promise.reject(err);
     }
 }
 
-const sleep = async (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
-
-getTweets();
 
