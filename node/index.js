@@ -4,7 +4,11 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT
 
-app.get('/', (req, res) => {
+app.get('/migrateTweets', (req, res) => {
+
+});
+
+app.get('/getTweets', (req, res) => {
     getTweets().then(_ => {
         res.send('done');
     }).catch(err => {

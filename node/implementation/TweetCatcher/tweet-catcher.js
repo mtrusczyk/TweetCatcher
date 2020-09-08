@@ -16,8 +16,6 @@ class TweetCatcher {
             console.error(err);
             Promise.reject();
         }
-
-
     }
 }
 
