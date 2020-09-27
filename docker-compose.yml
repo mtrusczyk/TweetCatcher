@@ -1,22 +1,10 @@
 version: "3"
 
 services:
-  db:
-    image: "mongo:4.2"
-    restart: always
-    volumes:
-      - "/data:/data/db"
-    env_file:
-      - '.env'
-    ports:
-      - "27017:27017"
-    networks: 
-      - back-tier
-  
   service:
     build: ./node
     volumes:
-      - ./node:/app
+      - ./tweetCatcher:/app
     command: node index.js
     ports:
       - 3000:3000
